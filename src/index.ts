@@ -1,5 +1,7 @@
 import { select } from "@inquirer/prompts";
-import { runPlaywrightTests } from "./task1";
+import { delay } from "./lib/utils";
+import runPlaywrightTests from "./task1";
+import runTask2 from "./task2";
 
 async function main() {
   const testChoice = await select({
@@ -18,21 +20,29 @@ async function main() {
     ],
   });
 
-  switch (testChoice) {
-    case "task1":
-      console.log("Running Task 1");
-      runPlaywrightTests();
-      break;
-    case "task2":
-      console.log("Running Task 2");
-      break;
-    case "task3":
-      console.log("Running Task 3");
-      break;
-    default:
-      console.log("Exiting");
-      process.exit(0);
+  try {
+    switch (testChoice) {
+      case "task1":
+        console.log("Running Task 1");
+        await runPlaywrightTests();
+        break;
+      case "task2":
+        console.log("Running Task 2");
+        await runTask2();
+        break;
+      case "task3":
+        console.log("Running Task 3");
+        break;
+      default:
+        console.log("Exiting");
+        process.exit(0);
+    }
+  } catch (error) {
+    console.log(error);
   }
+  // restart from start
+  await delay(1000);
+  main();
 }
 
 main();
