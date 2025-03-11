@@ -1,0 +1,20 @@
+{% comment %}
+  Renders product 'On Sale' badge
+
+  Accepts:
+  - product: {Object} Product Liquid object
+
+  Usage:
+  {% render 'product-sale-badge', product: product %}
+{% endcomment %}
+
+{%- liquid
+  assign compare_at_price = product.selected_or_first_available_variant.compare_at_price
+  assign price = product.selected_or_first_available_variant.price
+-%}
+
+{%- if compare_at_price > price -%}
+  <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
+    {{ 'products.product.on_sale' | t }}
+  </span>
+{%- endif -%}
