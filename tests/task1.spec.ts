@@ -1,4 +1,5 @@
 import { test, expect } from "playwright/test";
+import { delay } from "../src/lib/utils";
 
 const productWithVariantOnSale =
   "https://fei-alumiermd-test.myshopify.com/products/the-complete-snowboard";
@@ -7,6 +8,7 @@ test("product variant on sale should have 'On Sale' badge", async ({
   page,
 }) => {
   await page.goto(productWithVariantOnSale);
+  await delay(2000);
 
   // enter password if redirected to password page
   if (page.url().includes("password")) {
