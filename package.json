@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start": "tsx src",
-    "server": "tsx server.ts",
+    "server": "tsx src/server.ts",
     "test": "vitest"
   },
   "dependencies": {
