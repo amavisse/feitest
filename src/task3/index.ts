@@ -52,13 +52,10 @@ export const applyDiscount = (
     );
     newCompareAtPrice = variant.price;
   } else {
-    newPrice = (Number(variant.price) * (1 - discountPercentage / 100)).toFixed(
+    newPrice = (Number(variant.compareAtPrice) * (1 - discountPercentage / 100)).toFixed(
       2
     );
-    newCompareAtPrice = (
-      Number(variant.compareAtPrice) *
-      (1 - discountPercentage / 100)
-    ).toFixed(2);
+    newCompareAtPrice = variant.compareAtPrice;
   }
   return {
     ...variant,
