@@ -1,5 +1,22 @@
 import { productFragment } from "./fragments";
 
+export const getProductsQuery = `
+query getProducts($first: Int!, $after: String) {
+  products(first: $first, after: $after) {
+    edges {
+      node {
+        ...product
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+${productFragment}
+`;
+
 export const getProductsIdQuery = `
 query getProducts($first: Int!, $after: String) {
   products(first: $first, after: $after) {

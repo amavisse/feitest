@@ -1,4 +1,13 @@
-import { Connection, Extensions, Order, ShopifyOrder } from "./shopify/types";
+import { discountThresholdAlert } from "../task3";
+import {
+  Connection,
+  Extensions,
+  Money,
+  Order,
+  Product,
+  ShopifyOrder,
+  ShopifyProduct,
+} from "./shopify/types";
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -29,3 +38,25 @@ export const reshapeOrders = (shopifyOrders: ShopifyOrder[]): Order[] =>
     ...shopifyOrder,
     lineItems: removeEdgesAndNodes(shopifyOrder.lineItems),
   }));
+
+export const reshapeProduct = (shopifyProduct: ShopifyProduct): Product => ({
+  ...shopifyProduct,
+  variants: removeEdgesAndNodes(shopifyProduct.variants),
+});
+
+export const reshapeProducts = (shopifyProducts: ShopifyProduct[]): Product[] =>
+  shopifyProducts.map((shopifyProduct) => reshapeProduct(shopifyProduct));
+
+export const compareDates = (date1: string, date2: string): number =>
+  new Date(date1).getTime() - new Date(date2).getTime();
+
+export const isDiscountHigherThanThreshold = (
+  price: Money,
+  compareAtPrice: Money,
+  threshold = discountThresholdAlert
+): boolean => 1 - Number(price) / Number(compareAtPrice) > threshold / 100;
+
+export const findDiscountPercentage = (
+  price: Money,
+  compareAtPrice: Money
+): string => ((1 - Number(price) / Number(compareAtPrice)) * 100).toFixed(2);

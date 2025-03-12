@@ -22,6 +22,8 @@ export type Extensions = {
   };
 };
 
+export type Money = string
+
 export type MoneyV2 = {
   amount: string;
   currencyCode: string;
@@ -35,6 +37,7 @@ export type ShopifyProduct = {
   id: string;
   title: string;
   handle: string;
+  updatedAt: string;
   variants: Connection<ProductVariant>;
   featuredMedia: {
     preview: {
@@ -51,9 +54,12 @@ export type MinimalProduct = {
 export type ProductVariant = {
   id: string;
   title: string;
-  image: Image;
-  contextualPricing: {
-    compareAtPrice: MoneyV2;
+  image?: Image;
+  updatedAt: string;
+  price: Money;
+  compareAtPrice?: Money;
+  contextualPricing?: {
+    compareAtPrice?: MoneyV2;
     price: MoneyV2;
   };
 };
@@ -91,6 +97,17 @@ export type PageInfo = {
   pageInfo: { hasNextPage: boolean; endCursor?: string };
 };
 
+export type ShopifyProductsOperation = {
+  data: {
+    products: Connection<ShopifyProduct> & PageInfo;
+  };
+  variables: {
+    first: number;
+    after?: string;
+  };
+  extensions: Extensions;
+};
+
 export type ShopifyProductsIdOperation = {
   data: {
     products: Connection<MinimalProduct> & PageInfo;
@@ -121,4 +138,24 @@ export type ShopifyOrdersOperation = {
     after?: string;
   };
   extensions: Extensions;
+};
+
+export type ShopifyproductVariantsBulkUpdateOperation = {
+  data: {
+    productVariantsBulkUpdate: {
+      product: { id: string };
+      productVariants: { id: string };
+    };
+  };
+  variables: {
+    productId: string;
+    variants: ProductVariantsBulkInput[];
+  };
+  userErrors: [{ field: string; message: string }];
+};
+
+export type ProductVariantsBulkInput = {
+  id: string;
+  compareAtPrice: Money;
+  price: Money;
 };

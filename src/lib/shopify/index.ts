@@ -6,14 +6,27 @@ import {
   handleRateLimiting,
   removeEdgesAndNodes,
   reshapeOrders,
+  reshapeProduct,
+  reshapeProducts,
 } from "../utils";
-import { getOrdersQuery, getProductsIdQuery } from "./graphql-admin/queries";
+import { productVariantsBulkUpdateMutation } from "./graphql-admin/mutations";
+import {
+  getOrdersQuery,
+  getProductByIdQuery,
+  getProductsIdQuery,
+  getProductsQuery,
+} from "./graphql-admin/queries";
 import {
   ExtractVariables,
   MinimalProduct,
   Order,
+  Product,
+  ProductVariantsBulkInput,
   ShopifyOrdersOperation,
+  ShopifyProductOperation,
   ShopifyProductsIdOperation,
+  ShopifyProductsOperation,
+  ShopifyproductVariantsBulkUpdateOperation,
 } from "./types";
 
 export async function shopifyFetch<T>({
@@ -97,4 +110,54 @@ export async function getOrders(
   }
 
   return ordersAccumulator;
+}
+
+export async function getAllProducts(
+  cursor?: string,
+  productsAccumulator: Product[] = []
+): Promise<Product[]> {
+  const variables = { first: 250, after: cursor };
+  const result = await shopifyFetch<ShopifyProductsOperation>({
+    query: getProductsQuery,
+    variables,
+  });
+
+  const newProductsId = reshapeProducts(
+    removeEdgesAndNodes(result.data.products)
+  );
+
+  productsAccumulator.push(...newProductsId);
+
+  if (result.data.products.pageInfo.hasNextPage) {
+    await handleRateLimiting(result.extensions);
+
+    return getAllProducts(
+      result.data.products.pageInfo.endCursor,
+      productsAccumulator
+    );
+  }
+
+  return productsAccumulator;
+}
+
+export async function getProductById(id: string): Promise<Product> {
+  const result = await shopifyFetch<ShopifyProductOperation>({
+    query: getProductByIdQuery,
+    variables: { id },
+  });
+
+  return reshapeProduct(result.data.product);
+}
+
+export async function updateProductVariants(
+  productId: string,
+  productVariantsBulkInput: ProductVariantsBulkInput[]
+) {
+  if (!productVariantsBulkInput.length) return "No variants to update";
+  const result = await shopifyFetch<ShopifyproductVariantsBulkUpdateOperation>({
+    query: productVariantsBulkUpdateMutation,
+    variables: { productId, variants: productVariantsBulkInput },
+  });
+
+  return result.userErrors;
 }
