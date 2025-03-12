@@ -6,11 +6,11 @@ const env = cleanEnv(process.env, {
   SHOPIFY_ADMIN_API_ACCESS_TOKEN: str(),
   MONGODB_URI: str({ devDefault: "" }),
   SERVER_URL: url(),
-  SERVER_KEY: str(),
-  SHOPIFY_WEBHOOK_SECRET: str(),
-  SENDER_EMAIL: str(),
-  SENDER_APP_PASSWORD: str(),
-  RECEIVER_EMAIL: str(),
+  SERVER_KEY: str({ devDefault: "" }),
+  SHOPIFY_WEBHOOK_SECRET: str({ devDefault: "" }),
+  SENDER_EMAIL: str({ devDefault: "" }),
+  SENDER_APP_PASSWORD: str({ devDefault: "" }),
+  RECEIVER_EMAIL: str({ devDefault: "" }),
 });
 
 export const SHOPIFY_STORE_URL = env.SHOPIFY_STORE_URL;
