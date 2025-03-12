@@ -2,6 +2,7 @@ import { select } from "@inquirer/prompts";
 import { delay } from "./lib/utils";
 import runPlaywrightTests from "./task1";
 import runTask2 from "./task2";
+import runTask3 from "./task3";
 
 async function main() {
   const testChoice = await select({
@@ -32,6 +33,7 @@ async function main() {
         break;
       case "task3":
         console.log("Running Task 3");
+        await runTask3()
         break;
       default:
         console.log("Exiting");
